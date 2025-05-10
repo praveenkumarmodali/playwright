@@ -7,9 +7,9 @@ const config = {
   expect: {
     timeout: 5000,
   },
-  reporter: "html",
+  // reporter: "html",
   use: {
-    browserName: "chromium",
+    browserName: "firefox",
     headless: false,
   },
 };

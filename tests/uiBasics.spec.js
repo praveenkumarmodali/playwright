@@ -32,13 +32,14 @@ test("browser Context playwright test successful login", async function ({
 });
 
 // un successful login
-test.only("browser Context playwright test unsuccessfull login", async function ({
+test.only("browser Context playwright test Standalone login", async function ({
   browser,
 }) {
   const context = await browser.newContext();
   const page = await context.newPage();
 
   // ----------
+  // login page
   const okayBtn = page.locator("button#okayBtn");
   const username = page.locator("input#username");
   const password = page.locator("input#password");
@@ -77,6 +78,8 @@ test.only("browser Context playwright test unsuccessfull login", async function 
   // home page
   console.log(await products.first().textContent());
   console.log(await products.nth(1).textContent());
+  const allTitles = await products.allTextContents();
+  console.log(allTitles);
 
   // await page.close();
 });
