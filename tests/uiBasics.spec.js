@@ -1,0 +1,82 @@
+const { test, expect } = require("@playwright/test");
+
+//browser invoking and basic title assertions
+
+// successfull login
+test("browser Context playwright test successful login", async function ({
+  browser,
+}) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  // ----------
+  const okayBtn = page.locator("button#okayBtn");
+  const username = page.locator("input#username");
+  const password = page.locator("input#password");
+  const user_checkbox = page.locator(
+    "//label[@class='customradio'][2]/span[@class='checkmark']"
+  );
+  const terms = page.locator("input#terms");
+  const signInBtn = page.locator("input#signInBtn");
+  // -----------
+  await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+  const title = await page.title();
+  console.log("Page title :", title);
+  await okayBtn.click();
+  await username.fill("rahulshettyacademy");
+  await password.fill("learning");
+  await user_checkbox.click();
+  await terms.click();
+  await signInBtn.click();
+  await page.close();
+});
+
+// un successful login
+test.only("browser Context playwright test unsuccessfull login", async function ({
+  browser,
+}) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  // ----------
+  const okayBtn = page.locator("button#okayBtn");
+  const username = page.locator("input#username");
+  const password = page.locator("input#password");
+  const user_checkbox = page.locator(
+    "//label[@class='customradio'][2]/span[@class='checkmark']"
+  );
+  const terms = page.locator("input#terms");
+  const signInBtn = page.locator("input#signInBtn");
+  const errorMessage = page.locator("[style*='block']");
+  // -----------
+
+  await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+  const title = await page.title();
+  console.log("Page title :", title);
+
+  //invalid login
+  await username.fill("rahulshetty");
+  await password.fill("learning");
+  await signInBtn.click();
+  console.log(await errorMessage.textContent());
+  await expect(errorMessage).toContainText("Incorrect");
+  //----
+
+  // valid login
+  await username.fill("");
+  await username.fill("rahulshettyacademy");
+  await password.fill("learning");
+  await user_checkbox.click();
+  await okayBtn.click();
+  await terms.check();
+  await signInBtn.click();
+  // await page.close();
+});
+
+test("page playwright test", async function ({ page }) {
+  await page.goto("http://www.google.com");
+  const title = await page.title();
+  console.log("Page title : ", title);
+  await expect(page).toHaveTitle("Google");
+  await page.close();
+});
