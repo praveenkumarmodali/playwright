@@ -48,6 +48,9 @@ test.only("browser Context playwright test unsuccessfull login", async function 
   const terms = page.locator("input#terms");
   const signInBtn = page.locator("input#signInBtn");
   const errorMessage = page.locator("[style*='block']");
+
+  // home page
+  const products = page.locator(".card-body a");
   // -----------
 
   await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
@@ -70,6 +73,11 @@ test.only("browser Context playwright test unsuccessfull login", async function 
   await okayBtn.click();
   await terms.check();
   await signInBtn.click();
+
+  // home page
+  console.log(await products.first().textContent());
+  console.log(await products.nth(1).textContent());
+
   // await page.close();
 });
 
