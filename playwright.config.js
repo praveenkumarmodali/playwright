@@ -1,3 +1,5 @@
+const { trace } = require("console");
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -7,10 +9,12 @@ const config = {
   expect: {
     timeout: 5000,
   },
-  // reporter: "html",
+  reporter: "html",
   use: {
     browserName: "firefox",
     headless: false,
+    screenshot: "on",
+    trace: "retain-on-failure",
   },
 };
 
