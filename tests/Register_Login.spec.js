@@ -38,7 +38,7 @@ test("resgister", async function ({ page }) {
   await reg.click();
 });
 
-test.only("Login", async function ({ page }) {
+test("Login", async function ({ page }) {
   await page.goto("https://rahulshettyacademy.com/client");
   console.log(await page.title());
 
@@ -58,4 +58,45 @@ test.only("Login", async function ({ page }) {
   console.log(allTitles);
 
   await page.close();
+});
+
+test.only("end to end StandAlone test", async function ({ page }) {
+  await page.goto("https://rahulshettyacademy.com/client");
+  console.log(await page.title());
+
+  const email = page.locator("#userEmail");
+  await email.fill("examplepraveenmodali@gmail.com");
+
+  const password = page.locator("#userPassword");
+  await password.fill("Caazxy*28");
+
+  const login = page.locator("[value='Login']");
+  await login.click();
+
+  const products = page.locator(".card-body");
+
+  await page.waitForLoadState("networkidle");
+
+  const count = await products.count();
+  console.log(count);
+
+  let productText = "";
+  for (let i = 0; i < count; i++) {
+    productText = await products.locator("b").nth(i).textContent();
+
+    if (productText === "IPHONE 13 PRO") {
+      await products.locator("//button[text()=' Add To Cart']").nth(i).click();
+      break;
+    }
+  }
+
+  const cartButton = page.locator("[routerlink*='cart']");
+  await cartButton.click();
+
+  await page.locator(".items").first().waitFor();
+  const cartProduct = page.locator(".cartSection h3");
+  await cartProduct.isVisible();
+
+  const cartProductText = await cartProduct.textContent();
+  await expect(cartProductText.trim()).toEqual(productText.trim());
 });

@@ -22,17 +22,18 @@ test("browser Context playwright test successful login", async function ({
   await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
   const title = await page.title();
   console.log("Page title :", title);
-  await okayBtn.click();
+
   await username.fill("rahulshettyacademy");
   await password.fill("learning");
   await user_checkbox.click();
+  await okayBtn.click();
   await terms.click();
   await signInBtn.click();
   await page.close();
 });
 
 // un successful login
-test.only("browser Context playwright test Standalone login", async function ({
+test("browser Context playwright test Standalone login", async function ({
   browser,
 }) {
   const context = await browser.newContext();
@@ -40,12 +41,14 @@ test.only("browser Context playwright test Standalone login", async function ({
 
   // ----------
   // login page
+
   const okayBtn = page.locator("button#okayBtn");
   const username = page.locator("input#username");
   const password = page.locator("input#password");
   const user_checkbox = page.locator(
     "//label[@class='customradio'][2]/span[@class='checkmark']"
   );
+  const dropdown = page.locator("select.form-control");
   const terms = page.locator("input#terms");
   const signInBtn = page.locator("input#signInBtn");
   const errorMessage = page.locator("[style*='block']");
@@ -71,8 +74,12 @@ test.only("browser Context playwright test Standalone login", async function ({
   await username.fill("rahulshettyacademy");
   await password.fill("learning");
   await user_checkbox.click();
+  await expect(user_checkbox).toBeChecked();
+  await dropdown.selectOption("Teacher");
   await okayBtn.click();
+  expect(await terms.isChecked()).toBeFalsy();
   await terms.check();
+
   await signInBtn.click();
 
   // home page
@@ -84,10 +91,20 @@ test.only("browser Context playwright test Standalone login", async function ({
   // await page.close();
 });
 
-test("page playwright test", async function ({ page }) {
-  await page.goto("http://www.google.com");
-  const title = await page.title();
-  console.log("Page title : ", title);
-  await expect(page).toHaveTitle("Google");
-  await page.close();
+test("Child Window Handling", async function ({ browser }) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+  const documentLink = page.locator("[href*='document']");
+  await expect(documentLink).toHaveAttribute("class", "blinkingText");
+
+  const [page2] = await Promise.all([
+    context.waitForEvent("page"),
+    documentLink.click(),
+  ]);
+
+  const redText = await page2.locator("[class*='red']").textContent();
+  console.log(redText);
+
+  await page2.close();
 });
