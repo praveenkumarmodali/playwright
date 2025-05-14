@@ -1,71 +1,16 @@
 const { test, expect } = require("@playwright/test");
 
-test("resgister", async function ({ page }) {
-  await page.goto("https://rahulshettyacademy.com/client");
-  console.log(await page.title());
+let webContext;
+let username;
 
-  const register_link = page.locator("//a[text()='Register here']");
-  await register_link.click();
-
-  const firstName = page.locator("#firstName");
-  await firstName.fill("Praveen");
-
-  const lastName = page.locator("#lastName");
-  await lastName.fill("Kumar");
-
-  const email = page.locator("#userEmail");
-  await email.fill("examplepraveenmodali@gmail.com");
-
-  const phoneNum = page.locator("#userMobile");
-  await phoneNum.fill("1234556772");
-
-  const occupation = page.locator("[formcontrolname='occupation']");
-  await occupation.selectOption("Student");
-
-  const maleBtn = page.locator("[value='Male']");
-  await maleBtn.click();
-
-  const password = page.locator("#userPassword");
-  await password.fill("@12345678");
-
-  const confirmPass = page.locator("#confirmPassword");
-  await confirmPass.fill("@12345678");
-
-  const above18CheckBox = page.locator("//input[@type='checkbox']");
-  await above18CheckBox.check();
-
-  const reg = page.locator("[value='Register']");
-  await reg.click();
-});
-
-test("Login", async function ({ page }) {
-  await page.goto("https://rahulshettyacademy.com/client");
-  console.log(await page.title());
-
-  const email = page.locator("#userEmail");
-  await email.fill("examplepraveenmodali@gmail.com");
-
-  const password = page.locator("#userPassword");
-  await password.fill("Caazxy*28");
-
-  const login = page.locator("[value='Login']");
-  await login.click();
-
-  const products = page.locator(".card-body b");
-
-  await page.waitForLoadState("networkidle");
-  const allTitles = await products.allTextContents();
-  console.log(allTitles);
-
-  await page.close();
-});
-
-test.only("end to end StandAlone test", async function ({ page }) {
+test.beforeAll(async ({ browser }) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
   // landing page
   await page.goto("https://rahulshettyacademy.com/client");
   console.log(await page.title());
 
-  const username = "examplepraveenmodali@gmail.com";
+  username = "examplepraveenmodali@gmail.com";
   const email = page.getByPlaceholder("email@example.com");
   await email.fill(username);
 
@@ -75,11 +20,18 @@ test.only("end to end StandAlone test", async function ({ page }) {
   const login = page.getByRole("button", { value: "Login" });
   await login.click();
 
-  // go to products catalog
   await page.waitForLoadState("networkidle");
 
-  const products = page.locator(".card-body");
+  await context.storageState({ path: "state.json" });
 
+  webContext = await browser.newContext({ storageState: "state.json" });
+});
+
+test("end to end StandAlone test", async function () {
+  const page = await webContext.newPage();
+  await page.goto("https://rahulshettyacademy.com/client");
+  // go to products catalog
+  const products = page.locator(".card-body");
   await products
     .filter({ hasText: "IPHONE 13 PRO" })
     .getByRole("button", { name: " Add To Cart" })

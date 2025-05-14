@@ -11,7 +11,7 @@ const config = {
   },
   reporter: "html",
   use: {
-    browserName: "firefox",
+    browserName: "chromium",
     headless: false,
     screenshot: "on",
     trace: "retain-on-failure",
